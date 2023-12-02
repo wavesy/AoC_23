@@ -2,8 +2,6 @@ import sys
 import string
 
 
-
-
 def get_calib_num(line: str) -> int:
     """
     Parses a string and finds the first and last numerical, 
@@ -13,9 +11,10 @@ def get_calib_num(line: str) -> int:
     def _parse_for_literal(line: str, direction: str) -> int or None:
         """
         Check if start of line is a digit literal.
-        If yes, return corresponding integer.
+        If yes, return corresponding integer (as a character, type cast happens later).
         """
 
+        # Type conversion happens later.
         literals_to_nums = {"one":    '1',
                             "two":    '2',
                             "three":  '3',
@@ -82,6 +81,7 @@ def main():
     print(calib_val)
 
     return 0
+
 
 if __name__ == "__main__":
     main()
