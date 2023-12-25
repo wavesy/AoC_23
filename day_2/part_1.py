@@ -48,7 +48,6 @@ def parse_draws(line: str) -> list:
 
     draws = line.split(':')[1]
     draws = draws.split(';')
-    is_valid = True
     results = []
 
     for draw in draws:
