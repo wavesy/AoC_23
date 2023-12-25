@@ -32,7 +32,7 @@ def accumulate_scores(scores_and_colors: list) -> dict:
 
 def parse_game(line: str) -> dict:
     """
-    NOTE: Doesn't comply with part 1 specs
+    NOTE: Doesn't comply with part 1 specs, don't use
     Parse a line that contains game results, return point sums
     """
     pattern = re.compile(r'\d+\s+(red|green|blue)')
@@ -43,23 +43,20 @@ def parse_game(line: str) -> dict:
     return accumulate_scores(scores_and_colors)
 
 
-def validate_draws(line: str) -> bool:
+def parse_draws(line: str) -> list:
     pattern = re.compile(r'\d+\s+(red|green|blue)')
-    draw_result = {'red': 0, 'green': 0, 'blue': 0}
 
     draws = line.split(':')[1]
     draws = draws.split(';')
     is_valid = True
+    results = []
 
     for draw in draws:
         matches = pattern.finditer(draw)
         scores = [match.group() for match in matches]
-        result = accumulate_scores(scores)
-        if not check_validity(result):
-            is_valid = False
-            break
+        results.append(accumulate_scores(scores))
 
-    return is_valid
+    return results
 
 
 def check_validity(result: dict) -> bool:
@@ -75,9 +72,18 @@ def main():
 
     with open(input_file_path, 'r') as file:
         for line in file:
-            if validate_draws(line):
+            results = parse_draws(line)
+
+            is_valid = True
+            for result in results:
+                if not check_validity(result):
+                    is_valid = False
+                    break
+
+            if is_valid:
                 print(f"Valid game ID: {line_cnt}")
                 valid_sum += line_cnt
+
             line_cnt += 1
 
     print(valid_sum)
