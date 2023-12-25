@@ -52,22 +52,10 @@ def validate_draws(line: str) -> bool:
     is_valid = True
 
     for draw in draws:
-        scores = pattern.finditer(draw)
-        for score in scores:
-            score = score.split(' ')
-            color = score[1]
-
-            try:
-                score = int(score[0])
-            except ValueError as e:
-                # In case of score N/A jump to next
-                print(e)
-                continue
-
-            if color in draw_result:
-                draw_result[color] += score
-
-        if not check_validity(draw_result):
+        matches = pattern.finditer(draw)
+        scores = [match.group() for match in matches]
+        result = accumulate_scores(scores)
+        if not check_validity(result):
             is_valid = False
             break
 
@@ -87,8 +75,7 @@ def main():
 
     with open(input_file_path, 'r') as file:
         for line in file:
-            game_result = parse_game(line)
-            if check_validity(game_result):
+            if validate_draws(line):
                 print(f"Valid game ID: {line_cnt}")
                 valid_sum += line_cnt
             line_cnt += 1
