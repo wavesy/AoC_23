@@ -5,37 +5,79 @@ N_RED = 12
 N_GREEN = 13
 N_BLUE = 14
 
-def parse_game(line: str) -> dict:
-    """
-    Parse a line that contains game results, return point sums
-    """
-    pattern = re.compile(r'\d+\s+(red|green|blue)')
-    game_result = {'red': 0, 'green': 0, 'blue': 0}
-    matches = pattern.finditer(line)
 
-    for match in matches:
-        # Get the actual match string from match object
-        match = match.group()
-        match = match.split(' ')
-        color = match[1]
+def accumulate_scores(scores_and_colors: list) -> dict:
+    """
+    For each pair in list, add score to corresponding color
+    in result dict. Return the accumulated dict.
+    """
+    result = {'red': 0, 'green': 0, 'blue': 0}
+
+    for pair in scores_and_colors:
+        pair = pair.split(' ')
+        color = pair[1]
         score = 0
 
         try:
-            score =  int(match[0])
-        except ValueError:
-            # In case of score N/A jump to next
+            score = int(pair[0])
+        except ValueError as e:
+            print(e)
             continue
 
-        if color in game_result:
-            game_result[color] += score
+        if color in result:
+            result[color] += score
 
-    return game_result
+    return result
 
 
-def check_validity(game_result: dict) -> bool:
-    return game_result['red'] <= N_RED and\
-           game_result['green'] <= N_GREEN and\
-           game_result['blue'] <= N_BLUE
+def parse_game(line: str) -> dict:
+    """
+    NOTE: Doesn't comply with part 1 specs
+    Parse a line that contains game results, return point sums
+    """
+    pattern = re.compile(r'\d+\s+(red|green|blue)')
+    matches = pattern.finditer(line)
+
+    scores_and_colors = [match.group() for match in matches]
+
+    return accumulate_scores(scores_and_colors)
+
+
+def validate_draws(line: str) -> bool:
+    pattern = re.compile(r'\d+\s+(red|green|blue)')
+    draw_result = {'red': 0, 'green': 0, 'blue': 0}
+
+    draws = line.split(':')[1]
+    draws = draws.split(';')
+    is_valid = True
+
+    for draw in draws:
+        scores = pattern.finditer(draw)
+        for score in scores:
+            score = score.split(' ')
+            color = score[1]
+
+            try:
+                score = int(score[0])
+            except ValueError as e:
+                # In case of score N/A jump to next
+                print(e)
+                continue
+
+            if color in draw_result:
+                draw_result[color] += score
+
+        if not check_validity(draw_result):
+            is_valid = False
+            break
+
+    return is_valid
+
+
+def check_validity(result: dict) -> bool:
+    return result['red'] <= N_RED and\
+           result['green'] <= N_GREEN and\
+           result['blue'] <= N_BLUE
 
 
 def main():
