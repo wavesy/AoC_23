@@ -44,6 +44,9 @@ def parse_game(line: str) -> dict:
 
 
 def parse_draws(line: str) -> list:
+    """
+    Returns a list of dicts [{'red': x, 'green': y, 'blue': z}, ...]
+    """
     pattern = re.compile(r'\d+\s+(red|green|blue)')
 
     draws = line.split(':')[1]
@@ -64,7 +67,7 @@ def check_validity(result: dict) -> bool:
            result['blue'] <= N_BLUE
 
 
-def main():
+def main() -> None:
     input_file_path = sys.argv[1]
     line_cnt = 1
     valid_sum = 0
@@ -86,8 +89,6 @@ def main():
             line_cnt += 1
 
     print(valid_sum)
-
-    return 0
 
 
 if __name__ == "__main__":
